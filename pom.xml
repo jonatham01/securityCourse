@@ -21,7 +21,7 @@
     <packaging>pom</packaging>
 
     <modules>
-
+        <module>Jwt-service</module>
     </modules>
 
     <properties>
