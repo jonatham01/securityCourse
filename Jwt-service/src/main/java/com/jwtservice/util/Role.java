@@ -1,5 +1,9 @@
 package com.jwtservice.util;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +43,14 @@ public enum Role {
     private List<RolePermission> permissions;
 
     Role(List<RolePermission> permissions){
+        this.permissions = permissions;
+    }
+
+    public List<RolePermission> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<RolePermission> permissions) {
         this.permissions = permissions;
     }
 }

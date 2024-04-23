@@ -1,13 +1,17 @@
 package com.jwtservice.entity;
 
+import com.jwtservice.util.Role;
+import com.jwtservice.util.RolePermission;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "auth-user")
@@ -27,10 +31,18 @@ public class User implements UserDetails {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private com.jwtservice.util.Role Role;
+    private Role role;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+
+        if(role==null) return null;
+
+        if(role.getPermissions()==null) return null;
+
+        return role.getPermissions().stream()
+                .map(each-> each.name())
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override
