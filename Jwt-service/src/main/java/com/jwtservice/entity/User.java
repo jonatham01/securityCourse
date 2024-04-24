@@ -22,8 +22,10 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user-id")
+    @Column(name = "user_id")
     private Long id;
+
+    @Column(unique = true, nullable = false)
     private String username;
 
     private String name;
@@ -40,8 +42,8 @@ public class User implements UserDetails {
         if(role.getPermissions()==null) return null;
 
         return role.getPermissions().stream()
-                .map(each-> each.name())
-                .map(SimpleGrantedAuthority::new)
+                .map(Enum::name)//.map(each-> each.name())
+                .map(SimpleGrantedAuthority::new)////.map(each-> new SimpleGrantedAuthority(each))
                 .collect(Collectors.toList());
     }
 

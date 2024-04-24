@@ -17,13 +17,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class SecurityBeanInjector {
 
-    @Autowired
-    AuthenticationConfiguration authenticationConfiguration;
 
     @Autowired
     private UserRepository userRepository;
+
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -41,10 +40,8 @@ public class SecurityBeanInjector {
 
     @Bean
     public UserDetailsService userDetailsService(){
-        return (username -> {
-            return userRepository.findByUsername(username)
-                    .orElseThrow(()-> new ObjectNotFoundException("User Not Found with username "+username )) ;
-        });
+        return (username -> userRepository.findByUsername(username)
+                .orElseThrow(()-> new ObjectNotFoundException("User Not Found with username "+username )));
     }
 
 }
