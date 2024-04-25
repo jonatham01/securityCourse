@@ -7,13 +7,15 @@ import com.jwtservice.repository.UserRepository;
 import com.jwtservice.util.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+@Service
 public class UserServiceImp implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
