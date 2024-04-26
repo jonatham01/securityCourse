@@ -3,6 +3,7 @@ package com.jwtservice.service;
 import com.jwtservice.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -23,7 +25,7 @@ public class JwtService {
     private String SECRET_KEY;
 
     private SecretKey generateKey(){
-        byte[] key = SECRET_KEY.getBytes();
+        byte[] key = Decoders.BASE64.decode("miclaveesseguraadadadadadadadadaddadadafdffadadadae");
         return Keys.hmacShaKeyFor(key);
     }
 

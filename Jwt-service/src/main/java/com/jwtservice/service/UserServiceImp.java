@@ -25,9 +25,9 @@ public class UserServiceImp implements UserService {
 
         validatePassword(newUser);
         User user = new User();
+        user.setName(newUser.getName());
         user.setUsername(newUser.getUsername());
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        user.setPassword(newUser.getPassword());
         user.setRole(Role.ROLE_ADMINISTRATOR);
         return userRepository.save(user);
     }

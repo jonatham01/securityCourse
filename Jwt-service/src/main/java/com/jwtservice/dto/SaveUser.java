@@ -12,7 +12,7 @@ public class SaveUser {
     private String username;
     @Size(min = 4, max = 20)
     private String name;
-    @Size(min = 8, max = 20)
+    @Size(min = 4, max = 20)
     private String password;
     @Size(min = 4, max = 20)
     private String repeatedPassword;
