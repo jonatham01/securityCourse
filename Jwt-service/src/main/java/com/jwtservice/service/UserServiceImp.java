@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImp implements UserService {
 
@@ -40,6 +42,9 @@ public class UserServiceImp implements UserService {
         if(!newUser.getRepeatedPassword().equals(newUser.getPassword())){
             throw new InvalidPasswordException("Password don't match");
         }
+    }
+    public Optional<User> findOneByUserName(String username) {
+        return userRepository.findByUsername(username);
     }
 
 }

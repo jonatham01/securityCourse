@@ -1,13 +1,22 @@
 package com.jwtservice.service;
 
+import com.jwtservice.dto.AuthenticationRequest;
+import com.jwtservice.dto.AuthenticationResponse;
 import com.jwtservice.dto.RegisteredUser;
 import com.jwtservice.dto.SaveUser;
 import com.jwtservice.entity.User;
+import com.jwtservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Service
@@ -18,6 +27,11 @@ public class AuthService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private UserRepository userRepository;
 
     public RegisteredUser registerOneCustomer(SaveUser newUser){
         User user = userService.registerOneCustomer(newUser);
@@ -41,4 +55,21 @@ public class AuthService {
         claims.put("authorities",user.getAuthorities());
         return claims;
     }
+
+    public AuthenticationResponse login(AuthenticationRequest authenticationRequest) {
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                authenticationRequest.getUsername(),
+                authenticationRequest.getPassword());
+
+        authenticationManager.authenticate(authentication);
+        //SecurityContextHolder.getContext().getAuthentication().setAuthenticated(true);
+
+        UserDetails user= userService.findOneByUserName(authenticationRequest.getUsername()).get();
+        String jwt =jwtService.generateToken(user, generateClaims((User) user));
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse();
+        authenticationResponse.setToken(jwt);
+        return authenticationResponse;
+    }
+
+
 }
