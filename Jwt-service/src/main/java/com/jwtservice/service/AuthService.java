@@ -64,12 +64,21 @@ public class AuthService {
         authenticationManager.authenticate(authentication);
         //SecurityContextHolder.getContext().getAuthentication().setAuthenticated(true);
 
-        UserDetails user= userService.findOneByUserName(authenticationRequest.getUsername()).get();
-        String jwt =jwtService.generateToken(user, generateClaims((User) user));
+        User user= userService.findOneByUserName(authenticationRequest.getUsername()).get();
+        String jwt =jwtService.generateToken(user, generateClaims(user));
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setToken(jwt);
         return authenticationResponse;
     }
 
 
+    public boolean validate(String token) {
+        try {
+            jwtService.extractUserName(token);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+
+    }
 }

@@ -30,8 +30,9 @@ public class HttpSecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .authorizeHttpRequests(authorizeRequests -> {
                     authorizeRequests.requestMatchers(HttpMethod.POST,"/customers").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/**").permitAll();
-                    //authorizeRequests.anyRequest().authenticated();
+                    authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/authenticate").permitAll();
+                    authorizeRequests.requestMatchers(HttpMethod.GET,"/auth/validate-token").permitAll();
+                    authorizeRequests.anyRequest().authenticated();
                 })
                 .build();
     }
