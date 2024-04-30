@@ -2,6 +2,7 @@ package com.jwtservice.controller;
 
 import com.jwtservice.dto.AuthenticationRequest;
 import com.jwtservice.dto.AuthenticationResponse;
+import com.jwtservice.entity.User;
 import com.jwtservice.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,11 @@ public class AuthenticationController {
 
             AuthenticationResponse response = authService.login(authenticationRequest);
             return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<User> getProfile(){
+        User user= authService.findLoggedInUser();
+        return  ResponseEntity.ok(user);
     }
 }
