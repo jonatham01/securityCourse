@@ -1,5 +1,6 @@
 package com.jwtservice.config.security;
 
+import com.jwtservice.util.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,22 @@ public class HttpSecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeRequests -> {
+
+                    authorizeRequests.requestMatchers(HttpMethod.GET,"/products")
+                            .hasAuthority(RolePermission.READ_ALL_PRODUCTS.name());
+
+                    authorizeRequests.requestMatchers(HttpMethod.GET,"/products/{productsId}")
+                            .hasAuthority(RolePermission.READ_ONE_PRODUCT.name());
+
+                    authorizeRequests.requestMatchers(HttpMethod.POST,"/products")
+                            .hasAuthority(RolePermission.CREATE_ONE_PRODUCT.name());
+
+                    authorizeRequests.requestMatchers(HttpMethod.PUT,"/products/{productsId}")
+                            .hasAuthority(RolePermission.UPDATE_ONE_PRODUCT.name());
+
+                    authorizeRequests.requestMatchers(HttpMethod.PUT,"/products/{productsId}/disabled")
+                            .hasAuthority(RolePermission.DISABLE_ONE_PRODUCT.name());
+
                     authorizeRequests.requestMatchers(HttpMethod.POST,"/customers").permitAll();
                     authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/authenticate").permitAll();
                     authorizeRequests.requestMatchers(HttpMethod.GET,"/auth/validate-token").permitAll();
