@@ -11,6 +11,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -25,6 +26,7 @@ public class SecurityBeanInjector {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
@@ -41,9 +43,11 @@ public class SecurityBeanInjector {
     @Bean
     public UserDetailsService userDetailsService(){
         return (username -> userRepository.findByUsername(username)
-                .orElseThrow(()-> new ObjectNotFoundException("User Not Found with username "+username )));
+                .orElseThrow(()-> new UsernameNotFoundException("User Not Found with username "+username )));
     }
 
 }
+
+
 
 

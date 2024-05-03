@@ -30,7 +30,7 @@ public class UserServiceImp implements UserService {
         user.setName(newUser.getName());
         user.setUsername(newUser.getUsername());
         user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-        user.setRole(Role.ROLE_ADMINISTRATOR);
+        user.setRole(Role.ADMINISTRATOR);
         return userRepository.save(user);
     }
 
