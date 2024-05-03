@@ -15,17 +15,21 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+//@EnableMethodSecurity(prePostEnabled = true)
 public class HttpSecurityConfig {
 
     @Autowired
     private AuthenticationProvider authenticationProvider;
+
+    @Autowired
+    private AuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
@@ -35,11 +39,10 @@ public class HttpSecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeRequests -> {
-
-                    authorizeRequests.requestMatchers(HttpMethod.POST,"/customers").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/authenticate").permitAll();
-                    authorizeRequests.requestMatchers(HttpMethod.GET,"/auth/validate-token").permitAll();
-                    authorizeRequests.anyRequest().authenticated();
+                    buildRequestMatches2(authorizeRequests);
+                })
+                .exceptionHandling(exceptions -> {
+                    exceptions.authenticationEntryPoint(authenticationEntryPoint);
                 })
                 .build();
     }
