@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,6 +21,7 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class HttpSecurityConfig {
 
     @Autowired
@@ -33,12 +36,15 @@ public class HttpSecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorizeRequests -> {
 
-                    buildRequestMatches(authorizeRequests);
+                    authorizeRequests.requestMatchers(HttpMethod.POST,"/customers").permitAll();
+                    authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/authenticate").permitAll();
+                    authorizeRequests.requestMatchers(HttpMethod.GET,"/auth/validate-token").permitAll();
+                    authorizeRequests.anyRequest().authenticated();
                 })
                 .build();
     }
 
-    private static void buildRequestMatches(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizeRequests) {
+    private static void buildRequestMatches2(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizeRequests) {
         authorizeRequests.requestMatchers(HttpMethod.GET,"/products")
                 .hasAnyRole(Role.ADMINISTRATOR.name(),Role.ASSISTANT_ADMINISTRATOR.name());
 
@@ -67,5 +73,12 @@ public class HttpSecurityConfig {
         authorizeRequests.requestMatchers(HttpMethod.GET,"/auth/validate-token").permitAll();
         authorizeRequests.anyRequest().authenticated();
     }
+
+    //anotamos esta clase con @EnableMethodSecurity(prePostEnabled = true)
+    //luego en el controller, cada metodo lo anotamos con @PreAutorize(hasRole(ADMINISTRADOR))
+    //SI ES CON Permission seria PreAutorize(hasAuthority(lista de permisos))
+    //    @PreAuthorize("permitAll()")
+    //    @PreAuthorize("denyAll()")
+
 }
 
