@@ -1,10 +1,12 @@
 package com.jwtservice.config.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.jwtservice.dto.ApiError;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -26,8 +28,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         error.setMethod(request.getMethod());
         error.setTimestamp(LocalDateTime.now());
         response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);//401
-        String jsonError= new ObjectMapper().writeValueAsString(error);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());//401
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        String jsonError=mapper.writeValueAsString(error);
         response.getWriter().print(jsonError);
     }
 }
