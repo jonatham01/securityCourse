@@ -4,8 +4,12 @@ import com.jwtservice.dto.AuthenticationRequest;
 import com.jwtservice.dto.AuthenticationResponse;
 import com.jwtservice.dto.RegisteredUser;
 import com.jwtservice.dto.SaveUser;
+import com.jwtservice.entity.JwtToken;
 import com.jwtservice.entity.User;
+import com.jwtservice.repository.JwtTokenRepository;
 import com.jwtservice.repository.UserRepository;
+import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +18,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,8 +36,12 @@ public class AuthService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    JwtTokenRepository jwtTokenRepository;
 
     public RegisteredUser registerOneCustomer(SaveUser newUser){
         User user = userService.registerOneCustomer(newUser);
@@ -72,12 +81,25 @@ public class AuthService {
         return authenticationResponse;
     }
 
+    public void logout(HttpServletRequest request){
+        String jwt = jwtService.extractJwtRequest(request);
+        if(  !StringUtils.hasText(jwt)) return;
+
+
+        Optional<JwtToken> token = jwtTokenRepository.findByToken(jwt);
+
+        if(token.isPresent() && token.get().isValid()){
+            token.get().setValid(false);
+            jwtTokenRepository.save(token.get());
+        }
+    }
+
 
     public boolean validate(String token) {
         try {
             jwtService.extractUserName(token);
             return true;
-        }catch (Exception e){
+        }catch (JwtException e){
             return false;
         }
 
