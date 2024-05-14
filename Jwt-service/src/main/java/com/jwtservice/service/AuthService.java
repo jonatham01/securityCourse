@@ -6,7 +6,7 @@ import com.jwtservice.dto.RegisteredUser;
 import com.jwtservice.dto.SaveUser;
 import com.jwtservice.entity.JwtToken;
 import com.jwtservice.entity.User;
-import com.jwtservice.repository.JwtRepository;
+import com.jwtservice.repository.JwtTokenRepository;
 import com.jwtservice.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,11 +36,12 @@ public class AuthService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private JwtRepository jwtTokenRepository;
+    JwtTokenRepository jwtTokenRepository;
 
     public RegisteredUser registerOneCustomer(SaveUser newUser){
         User user = userService.registerOneCustomer(newUser);
@@ -92,6 +93,7 @@ public class AuthService {
             jwtTokenRepository.save(token.get());
         }
     }
+
 
     public boolean validate(String token) {
         try {
