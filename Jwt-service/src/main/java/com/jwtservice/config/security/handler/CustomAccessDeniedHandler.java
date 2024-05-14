@@ -28,7 +28,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         error.setTimestamp(LocalDateTime.now());
 
         response.setContentType("application/json");
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());//401
+        response.setStatus(HttpStatus.FORBIDDEN.value());//403
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());

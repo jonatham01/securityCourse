@@ -5,9 +5,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
@@ -56,6 +58,15 @@ public class JwtService {
 
     public String extractUserName(String token) {
         return extractAllClaims(token).getSubject();
+    }
+    public String extractJwtRequest(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (!StringUtils.hasText(authHeader) && !authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+
+        return authHeader.split("Bearer ")[1];
     }
 
 }
