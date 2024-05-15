@@ -1,6 +1,8 @@
 package com.jwtservice.config.security;
 
+import com.jwtservice.entity.JwtToken;
 import com.jwtservice.entity.User;
+import com.jwtservice.repository.JwtRepository;
 import com.jwtservice.service.JwtService;
 import com.jwtservice.service.UserService;
 import jakarta.servlet.FilterChain;
@@ -16,16 +18,20 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserService userService;
+    private final JwtRepository jwtRepository;
 
-    public JwtAuthenticationFilter(JwtService jwtService, @Qualifier("userService") UserService userService) {
+    public JwtAuthenticationFilter(JwtService jwtService, @Qualifier("userService") UserService userService, JwtRepository jwtRepository) {
         this.jwtService = jwtService;
         this.userService = userService;
+        this.jwtRepository = jwtRepository;
     }
 
     @Override
@@ -36,6 +42,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        Optional<JwtToken> jwtUserToken = jwtRepository.findByToken(token);
+
+        boolean isValid = validateToken(jwtUserToken);
+        if (!isValid) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
         String username= jwtService.extractUserName(token);
 
@@ -51,6 +65,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
+    }
+
+    private boolean validateToken(Optional<JwtToken> jwtUserToken) {
+        if (!jwtUserToken.isPresent()) {
+            return false;
+        }
+        JwtToken jwtToken = jwtUserToken.get();
+        Date now = new Date(System.currentTimeMillis());
+        boolean valid = jwtToken.isValid() && jwtToken.getExpiration().after(now);
+        if (!valid) {
+            updateTokenStatus(jwtToken);
+        }
+        return valid;
+
+    }
+
+    private void updateTokenStatus(JwtToken jwtToken) {
+        jwtToken.setValid(false);
+        jwtRepository.save(jwtToken);
     }
 }
 
