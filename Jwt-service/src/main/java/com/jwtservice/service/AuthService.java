@@ -45,6 +45,8 @@ public class AuthService {
 
     public RegisteredUser registerOneCustomer(SaveUser newUser){
         User user = userService.registerOneCustomer(newUser);
+        String jwt= jwtService.generateToken(user,generateClaims(user));
+        saveUserToken(user,jwt);
 
         RegisteredUser registeredUser = new RegisteredUser();
         registeredUser.setId(user.getId());
@@ -52,7 +54,7 @@ public class AuthService {
         registeredUser.setName(user.getName());
         registeredUser.setRole(user.getRole().name());
 
-        String jwt= jwtService.generateToken(user,generateClaims(user));
+
         registeredUser.setJwt(jwt);
         return registeredUser;
     }
@@ -76,14 +78,28 @@ public class AuthService {
 
         User user= userService.findOneByUserName(authenticationRequest.getUsername()).get();
         String jwt =jwtService.generateToken(user, generateClaims(user));
+
+        saveUserToken(user,jwt);
+
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
         authenticationResponse.setToken(jwt);
         return authenticationResponse;
     }
 
+    private void saveUserToken(User user, String jwt) {
+
+        JwtToken token = new JwtToken();
+        token.setToken(jwt);
+        token.setUser(user);
+        token.setExpiration(jwtService.extractExpiration(jwt));
+        token.setValid(true);
+        jwtTokenRepository.save(token);
+
+    }
+
     public void logout(HttpServletRequest request){
         String jwt = jwtService.extractJwtRequest(request);
-        if(  !StringUtils.hasText(jwt)) return;
+        if(  !StringUtils.hasText(jwt) || jwt ==null) return;
 
 
         Optional<JwtToken> token = jwtTokenRepository.findByToken(jwt);

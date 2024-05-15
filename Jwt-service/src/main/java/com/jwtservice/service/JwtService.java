@@ -61,12 +61,13 @@ public class JwtService {
     }
     public String extractJwtRequest(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-
         if (!StringUtils.hasText(authHeader) && !authHeader.startsWith("Bearer ")) {
             return null;
         }
-
         return authHeader.split("Bearer ")[1];
     }
 
+    public Date extractExpiration(String jwt) {
+        return extractAllClaims(jwt).getExpiration();
+    }
 }
