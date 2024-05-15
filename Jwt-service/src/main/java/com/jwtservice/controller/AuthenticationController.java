@@ -2,8 +2,10 @@ package com.jwtservice.controller;
 
 import com.jwtservice.dto.AuthenticationRequest;
 import com.jwtservice.dto.AuthenticationResponse;
+import com.jwtservice.dto.LogoutResponse;
 import com.jwtservice.entity.User;
 import com.jwtservice.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,11 @@ public class AuthenticationController {
 
             AuthenticationResponse response = authService.login(authenticationRequest);
             return ResponseEntity.ok(response);
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<LogoutResponse> logout(HttpServletRequest request){
+        authService.logout(request);
+        return ResponseEntity.ok(new LogoutResponse("logout successful"));
     }
 
     @PreAuthorize("hasAuthority('READ_MY_PROFILE')")
