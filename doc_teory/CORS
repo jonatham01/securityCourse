@@ -1,0 +1,16 @@
+
+CORS
+    Cross origin resource sharing
+    Mecanismo de seguridad para permitir o restringir solicitudes de recursos entre distintos dominios
+
+    Origin: Indica el origen del cual proviene la solicitud
+
+    Access-control-allow-origin:
+        Enviado por el servidor
+        Indica que origenes tienen permisos para acceder a los recursos
+
+    Access-control-allow-Headers
+        Indica las cabeceras que se pueden incluir a la solicitud
+
+    Access-control-allow-credentials:
+        indica si permiten credenciales como cookies en la solicitud

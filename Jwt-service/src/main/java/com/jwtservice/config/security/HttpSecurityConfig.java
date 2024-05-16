@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -36,6 +37,7 @@ public class HttpSecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         return http
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable) //csrfConfigurer -> csrfConfigurer.disable()
                 .sessionManagement( config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
@@ -74,9 +76,14 @@ public class HttpSecurityConfig {
                 .hasAuthority(RolePermission.DISABLE_ONE_PRODUCT.name());
         //.hasAnyRole(Role.ADMINISTRATOR.name(),Role.ASSISTANT_ADMINISTRATOR.name());
 
+        authorizeRequests.requestMatchers(HttpMethod.GET,"/auth/profile")
+                .hasAnyRole(Role.ADMINISTRATOR.name(),Role.ASSISTANT_ADMINISTRATOR.name());
+
         authorizeRequests.requestMatchers(HttpMethod.POST,"/customers").permitAll();
         authorizeRequests.requestMatchers(HttpMethod.POST,"/auth/authenticate").permitAll();
         authorizeRequests.requestMatchers(HttpMethod.GET,"/auth/validate-token").permitAll();
+        authorizeRequests.requestMatchers(HttpMethod.GET,"/auth/logout").permitAll();
+
         authorizeRequests.anyRequest().authenticated();
     }
 

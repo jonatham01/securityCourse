@@ -1,0 +1,3 @@
+create fields JwtToken to allow access in multiple devices. for example if its an mobile o cpu
+
+create request to allow the delete and put methods with preflights authorizations.

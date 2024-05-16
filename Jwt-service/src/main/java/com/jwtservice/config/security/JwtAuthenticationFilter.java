@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean validateToken(Optional<JwtToken> jwtUserToken) {
-        if (!jwtUserToken.isPresent()) {
+        if (jwtUserToken.isEmpty()) {
             return false;
         }
         JwtToken jwtToken = jwtUserToken.get();
