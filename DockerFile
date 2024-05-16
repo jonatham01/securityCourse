@@ -1,0 +1,5 @@
+FROM eclipse-temurin:17-jdk-alpine
+volume /tmp
+COPY out/artifacts/Jwt_Service_jar/*.jar app.jar
+ENTRYPOINT [ "java" , "-jar", "app.jar" ]
+
