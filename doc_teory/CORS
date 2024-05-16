@@ -14,3 +14,7 @@ CORS
 
     Access-control-allow-credentials:
         indica si permiten credenciales como cookies en la solicitud
+
+@CrossOrigin()
+    se pueden anotar metodos o incluso toda la clase
+    @CrossOrigin(origins = "https://www.google.com")
