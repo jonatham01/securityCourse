@@ -59,6 +59,7 @@ public class JwtService {
     public String extractUserName(String token) {
         return extractAllClaims(token).getSubject();
     }
+
     public String extractJwtRequest(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (!StringUtils.hasText(authHeader) && !authHeader.startsWith("Bearer ")) {

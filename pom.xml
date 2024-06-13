@@ -22,6 +22,7 @@
 
     <modules>
         <module>Jwt-service</module>
+        <module>prueba/Jwt-service</module>
     </modules>
 
     <properties>
